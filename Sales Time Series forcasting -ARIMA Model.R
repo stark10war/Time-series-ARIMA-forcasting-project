@@ -104,10 +104,43 @@ plot(Tsdata,type="l", xlim = c(2003,2020), ylim = c(1,150000 ),xlab="Year",ylab=
 lines(10^(pred$pred),col="red")
 lines(10^(pred$pred+2*pred$se), col = 'blue')
 lines(10^(pred$pred-2*pred$se),col="black")
+##############################################################################################
+
+# Checking accuracy by taking shorter sample to predict the known future sales value
+
+Tsdata.train<- head(Tsdata, 133)
+
+Tsdata.test<- tail(Tsdata, 36)
 
 
+Tsdata.train<- ts(Tsdata.train ,start = c(2003,1),frequency = 12 )
+Tsdata.test<- ts(Tsdata.test,start = c(2014,2),frequency = 12 )
 
 
+start(Tsdata.train)
+end(Tsdata.train)
+
+start(Tsdata.test)
+end(Tsdata.test)
+
+ARIMAfit_new<- arima(log10(Tsdata.train), c(0,2,1))
+summary(ARIMAfit_new)
+
+pred<- predict(ARIMAfit_new, n.ahead = 36)
+predicted_values1<- 10^pred$pred
+predicted_values1
+
+
+#Ploting actual and predicted
+par(mfrow=c(1,1))
+plot(Tsdata.train, xlab= 'years', ylab='sales', ,xlim= c(2003, 2018), ylim = c(1, 120000),main = 'Sales actual and pred', col='grey')
+lines(predicted_values1, col= 'red')
+lines(Tsdata.test,col='blue')
+
+predicted_values1
+Tsdata.test
+
+#--------------------------------------End-------------------------------------------------------------
 
 
 
